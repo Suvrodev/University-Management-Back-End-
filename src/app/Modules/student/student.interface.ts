@@ -9,7 +9,7 @@ export type TGaurdian = {
 
 export type TStudentName = {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 };
 

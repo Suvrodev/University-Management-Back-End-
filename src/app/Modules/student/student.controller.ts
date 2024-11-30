@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import { StudentServices } from "./student.service";
+import studentValidationSchema from "./student.validation";
 
 //create Students
 const createStudent = async (req: Request, res: Response) => {
   try {
     const student = await req.body;
 
-    const result = await StudentServices.createStudentIntoDB(student);
+    //Creating a schema validation using zod
+    const zodParseData = studentValidationSchema.parse(student);
+    const result = await StudentServices.createStudentIntoDB(zodParseData);
 
     res.status(200).json({
       success: true,
@@ -17,6 +20,7 @@ const createStudent = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message || "Something going wrong",
+      error: error,
     });
   }
 };
