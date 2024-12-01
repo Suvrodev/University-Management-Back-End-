@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import bcrypt from "bcrypt";
 import {
   TGaurdian,
   TLocalGuardian,
@@ -7,6 +8,7 @@ import {
   TStudentModel,
   TStudentName,
 } from "./student.interface";
+import config from "../../config";
 
 const studentNameSchema = new Schema<TStudentName>({
   firstName: {
@@ -98,6 +100,11 @@ const studentSchema = new Schema<TStudent, TStudentModel, TStudentMethods>({
     required: [true, "Id must be required"],
     trim: true,
   },
+  password: {
+    type: String,
+    required: [true, "Password must be required"],
+    maxlength: [20, "Password can not be more than 20 character"],
+  },
   name: {
     type: studentNameSchema,
     required: [true, "Name must be required"],
@@ -170,6 +177,24 @@ const studentSchema = new Schema<TStudent, TStudentModel, TStudentMethods>({
     },
     default: "active",
   },
+});
+
+//Middleware
+//Document pre middleware
+studentSchema.pre("save", async function (next) {
+  //Hashing password and save into db
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bycript_salt_round)
+  );
+  next();
+});
+
+//Document post middleware
+studentSchema.post("save", function (doc, next) {
+  doc.password = "";
+  next();
 });
 
 //For Custom instance model
