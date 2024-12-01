@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export type TGaurdian = {
   fatherName: string;
   fatherOccupcation: string;
@@ -36,3 +38,15 @@ export type TStudent = {
   profileImage?: string;
   isActive: "active" | "blocked";
 };
+
+//For Static
+//Custom Instance Method
+export type TStudentMethods = {
+  isStudentExists(id: string): Promise<TStudent | null>;
+};
+
+export type TStudentModel = Model<
+  TStudent,
+  Record<string, never>,
+  TStudentMethods
+>;

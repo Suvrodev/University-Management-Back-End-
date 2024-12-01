@@ -3,6 +3,8 @@ import {
   TGaurdian,
   TLocalGuardian,
   TStudent,
+  TStudentMethods,
+  TStudentModel,
   TStudentName,
 } from "./student.interface";
 
@@ -89,7 +91,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent>({
+const studentSchema = new Schema<TStudent, TStudentModel, TStudentMethods>({
   id: {
     type: String,
     unique: true,
@@ -170,4 +172,13 @@ const studentSchema = new Schema<TStudent>({
   },
 });
 
-export const studentModel = model<TStudent>("Students", studentSchema);
+//For Custom instance model
+studentSchema.methods.isStudentExists = async function (id: string) {
+  const existingUser = await StudentModel.findOne({ id });
+  return existingUser;
+};
+export const StudentModel = model<TStudent, TStudentModel>(
+  "Students",
+  studentSchema
+);
+// export const studentModel = model<TStudent>("Students", studentSchema);
