@@ -1,45 +1,50 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { StudentServices } from "./student.service";
 import studentValidationSchema from "./student.validation";
 
 ///Get All Students
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
-    res.send({
+    res.status(200).json({
       success: true,
       message: "Successfully Retrive Students",
       data: result,
     });
   } catch (error: any) {
-    res.send({
-      success: false,
-      message: "Something went wrong",
-      error: error.message || error,
-    });
+    next(error);
   }
 };
 
 ///Get Single Student
-const getSingleStudents = async (req: Request, res: Response) => {
+const getSingleStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await StudentServices.getSingleStudentsFromDB(id);
-    res.send({
+    res.status(200).json({
       success: true,
       message: "Successfully Retrive Students",
       data: result,
     });
   } catch (error: any) {
-    res.send({
-      success: false,
-      message: error.message || "Something went wrong",
-    });
+    next(error);
   }
 };
 
 ///Get Single Student
-const deleteStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await StudentServices.deleteStudentFromDB(id);
@@ -49,10 +54,7 @@ const deleteStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.send({
-      success: false,
-      message: error.message || "Something went wrong",
-    });
+    next(error);
   }
 };
 
